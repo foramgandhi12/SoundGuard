@@ -32,7 +32,15 @@
       <i class="bi bi-mic-fill"></i>
       <span id="toggle-mic-text">Start Microphone</span>
     </button>
+    <div id="login-container">
+      <button id="login">Log In</button>
+      <button id="logout">Log Out</button>
+      <p id="username"></p>
+    </div>
     <script src="https://d3js.org/d3.v7.min.js"></script>
     <script type="module" src="audioControl_d3_v3.js"></script>
+    <script type="module" src="https://cdn.jsdelivr.net/npm/@auth0/auth0-spa-js@1.20.0/dist/auth0-spa-js.production.esm.js"></script>
+    <script type="module" src="auth.js"></script>
+    <script type="module" src="authProcess.js"></script>
   </body>
 </html>
