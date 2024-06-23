@@ -1,3 +1,11 @@
+import { initializeApp } from "https://www.gstatic.com/firebasejs/9.9.3/firebase-app.js";
+import { getFirestore } from "https://www.gstatic.com/firebasejs/9.9.3/firebase-firestore.js";
+import { collection, addDoc } from "https://www.gstatic.com/firebasejs/9.9.3/firebase-firestore.js";
+import firebaseConfig from "./firebaseConfig.js";
+
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
+
 let audioContext;
 let analyser;
 let dataArray;
@@ -100,18 +108,32 @@ async function* updateVolumeGenerator() {
     }
     const averageVolume = sum / dataArray.length;
     const roundedVolume = Math.round(averageVolume);
-    if (roundedVolume > 80 && !notificationVisible) {
-      appendAlert("Noise level is above 80 dB!", "success");
-    }
 
     document.getElementById("volume").innerText = `Volume: ${roundedVolume}`;
     if (data.length >= maxDataPoints) data.shift();
     data.push({ time: new Date(), volume: roundedVolume });
 
+    if (roundedVolume > 80 && !notificationVisible) {
+      appendAlert("Noise level is above 80 dB!", "success");
+      storeVolumeViolation(roundedVolume);
+    }
+    
     updateChart();
 
     await new Promise((resolve) => setTimeout(resolve, 1000 / 60)); // Update at ~60 FPS
     yield;
+  }
+}
+
+async function storeVolumeViolation(volume) {
+  try {
+    await addDoc(collection(db, "violations"), {
+      time: new Date(),
+      volume: volume,
+    });
+    console.log("Volume violation stored:", volume);
+  } catch (e) {
+    console.error("Error adding document: ", e);
   }
 }
 
