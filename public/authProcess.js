@@ -1,4 +1,4 @@
-import { login, logout, getUser, createClient } from './auth.js'; // Ensure proper import path
+import { login, logout, getUser, createClient } from './auth.js';
 
 await createClient();
 
