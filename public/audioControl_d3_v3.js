@@ -16,7 +16,7 @@ const data = [];
 const maxDataPoints = 300;
 let notificationVisible = false;
 
-const svg = d3.select(".chart");
+const svg = d3.select(".graph-container");
 const width = +svg.attr("width");
 const height = +svg.attr("height");
 const margin = { top: 20, right: 20, bottom: 30, left: 50 };
@@ -41,7 +41,7 @@ g.append("g")
 
 g.append("g").attr("class", "y-axis");
 
-function updateChart() {
+function updateChart(treshold) {
   xScale.domain([0, maxDataPoints - 1]);
 
   const segments = data.map((d, i) => ({
@@ -49,7 +49,7 @@ function updateChart() {
     y1: yScale(d.volume),
     x2: xScale(i + 1),
     y2: i < data.length - 1 ? yScale(data[i + 1].volume) : yScale(d.volume),
-    color: d.volume <= 30 ? "green" : d.volume <= 70 ? "yellow" : "red",
+    color: d.volume <= treshold/2 ? "#686D76" : d.volume <= treshold ? "#17a2b8" : "#DC5F00",
   }));
 
   const lines = g.selectAll(".segment").data(segments);
@@ -68,27 +68,28 @@ function updateChart() {
 
   lines.exit().remove();
 
-  g.select(".x-axis").call(
-    d3
-      .axisBottom(xScale)
-      .ticks(10)
-      .tickFormat((d, i) =>
-        data[i] ? d3.timeFormat("%H:%M:%S")(data[i].time) : "",
-      ),
-  );
+  // Removed x-axis for better graph visual
+  // g.select(".x-axis").call(
+  //   d3
+  //     .axisBottom(xScale)
+  //     .ticks(10)
+  //     .tickFormat((d, i) =>
+  //       data[i] ? d3.timeFormat("%M:%S")(data[i].time) : "",
+  //     ),
+  // );
 
   g.select(".y-axis").call(d3.axisLeft(yScale));
 }
 
 //bootstrap component retrieved from https://getbootstrap.com/docs/5.3/components/alerts/
 const alertPlaceholder = document.getElementById("liveAlertPlaceholder");
-const appendAlert = (message, type) => {
+const appendAlert = (message) => {
   notificationVisible = true;
   const wrapper = document.createElement("div");
   wrapper.innerHTML = [
-    `<div class="alert alert-${type} alert-dismissible" role="alert">`,
+    `<div class="alert alert-info alert-dismissible" role="alert">`,
     `   <div>${message}</div>`,
-    '   <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>',
+    '   <button type="button" class="btn-close" data-bs-dismiss="alert"></button>',
     "</div>",
   ].join("");
 
@@ -99,7 +100,7 @@ const appendAlert = (message, type) => {
   alertPlaceholder.append(wrapper);
 };
 
-async function* updateVolumeGenerator() {
+async function* updateVolumeGenerator(threshold) {
   while (isMicOn) {
     analyser.getByteFrequencyData(dataArray);
     let sum = 0;
@@ -113,12 +114,12 @@ async function* updateVolumeGenerator() {
     if (data.length >= maxDataPoints) data.shift();
     data.push({ time: new Date(), volume: roundedVolume });
 
-    if (roundedVolume > 80 && !notificationVisible) {
-      appendAlert("Noise level is above 80 dB!", "success");
+    if (roundedVolume > threshold && !notificationVisible) {
+      appendAlert(`Noise level is above ${threshold} dB!`);
       storeVolumeViolation(roundedVolume);
     }
     
-    updateChart();
+    updateChart(threshold);
 
     await new Promise((resolve) => setTimeout(resolve, 1000 / 60)); // Update at ~60 FPS
     yield;
@@ -146,8 +147,9 @@ async function startMicrophone() {
     analyser.fftSize = 256;
     source.connect(analyser);
     dataArray = new Uint8Array(analyser.frequencyBinCount);
+    let threshold = document.getElementById("current-threshold").value;
 
-    const volumeGenerator = updateVolumeGenerator();
+    const volumeGenerator = updateVolumeGenerator(threshold);
     async function runGenerator() {
       for await (const _ of volumeGenerator) {
       }
@@ -176,12 +178,12 @@ document.getElementById("toggle-mic").addEventListener("click", function () {
     stopMicrophone();
     this.innerHTML =
       '<i class="bi bi-mic-fill"></i> <span id="toggle-mic-text">Start Microphone</span>';
-    this.className = "btn btn-dark mt-3";
+    this.className = "btn btn-dark mb-4";
   } else {
     isMicOn = true;
     startMicrophone();
     this.innerHTML =
-      '<i class="bi bi-mic-mute-fill"></i> <span id="toggle-mic-text">Stop Microphone</span>';
-    this.className = "btn btn-light mt-3";
+      '<i class="bi bi-mic-fill" ></i> <span id="toggle-mic-text">Stop Microphone</span>';
+    this.className = "btn btn-secondary mb-4";
   }
 });
