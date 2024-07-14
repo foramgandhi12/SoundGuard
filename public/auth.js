@@ -1,5 +1,3 @@
-// auth.js
-
 import { Auth0Client } from 'https://cdn.jsdelivr.net/npm/@auth0/auth0-spa-js@1.20.0/dist/auth0-spa-js.production.esm.js';
 import auth0Config from './auth0Config.js';
 
@@ -11,6 +9,7 @@ async function createClient() {
     client_id: auth0Config.clientId,
     redirect_uri: auth0Config.redirectUri
   });
+  await auth0Client.checkSession();
 }
 
 async function login() {
@@ -18,11 +17,15 @@ async function login() {
 }
 
 async function logout() {
-  await auth0Client.logout();
+  await auth0Client.logout({ returnTo: auth0Config.redirectUri });
 }
 
 async function getUser() {
-  return await auth0Client.getUser();
+  try {
+    return await auth0Client.getUser();
+  } catch (error) {
+    return null;
+  }
 }
 
 export { createClient, login, logout, getUser };
