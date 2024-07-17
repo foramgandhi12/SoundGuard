@@ -1,5 +1,4 @@
 node_modules/
 .env
 .vscode/
-firebaseConfig.js
 auth0Config.js
