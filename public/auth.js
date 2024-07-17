@@ -1,5 +1,3 @@
-// auth.js
-
 import { Auth0Client } from 'https://cdn.jsdelivr.net/npm/@auth0/auth0-spa-js@1.20.0/dist/auth0-spa-js.production.esm.js';
 import auth0Config from './auth0Config.js';
 
