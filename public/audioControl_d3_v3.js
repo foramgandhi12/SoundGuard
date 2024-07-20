@@ -1,6 +1,7 @@
 import { initializeApp } from 'https://www.gstatic.com/firebasejs/9.9.3/firebase-app.js'
 import { getFirestore, collection, addDoc } from 'https://www.gstatic.com/firebasejs/9.9.3/firebase-firestore.js'
 import firebaseConfig from './firebaseConfig.js'
+import * as d3 from "https://cdn.jsdelivr.net/npm/d3@7/+esm";
 
 const app = initializeApp(firebaseConfig)
 const db = getFirestore(app)
@@ -138,7 +139,7 @@ async function storeVolumeViolation (volume) {
   }
 }
 
-async function startMicrophone () {
+export async function startMicrophone () {
   try {
     stream = await navigator.mediaDevices.getUserMedia({ audio: true })
     audioContext = new (window.AudioContext || window.webkitAudioContext)()
@@ -161,7 +162,7 @@ async function startMicrophone () {
   }
 }
 
-function stopMicrophone () {
+export function stopMicrophone () {
   if (stream) {
     stream.getTracks().forEach((track) => track.stop())
   }
