@@ -13,7 +13,7 @@
     "routes": [
       {
         "src": "/config",
-        "dest": "/api/config"
+        "dest": "/config"
       },
       {
         "src": "/(.*)",
