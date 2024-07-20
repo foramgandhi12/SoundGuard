@@ -26,7 +26,7 @@ async function initFirebase() {
     const innerHeight = height - margin.top - margin.bottom;
 
     const xScale = d3.scaleLinear().range([0, innerWidth]);
-    const yScale = d3.scaleLinear().domain([0, 100]).range([innerHeight, 0]);
+    const yScale = d3.scaleLinear().domain([0, 140]).range([innerHeight, 0]);
 
     const line = d3
       .line()
@@ -51,7 +51,7 @@ async function initFirebase() {
         y1: yScale(d.volume),
         x2: xScale(i + 1),
         y2: i < data.length - 1 ? yScale(data[i + 1].volume) : yScale(d.volume),
-        color: d.volume <= treshold/2 ? "#686D76" : d.volume <= treshold ? "#17a2b8" : "#DC5F00",
+        color: d.volume <= treshold/2 ? "#238823" : d.volume <= treshold ? "#EFB700" : "#D2222D",
       }));
 
       const lines = g.selectAll(".segment").data(segments);
@@ -70,16 +70,6 @@ async function initFirebase() {
 
       lines.exit().remove();
 
-      // Removed x-axis for better graph visual
-      // g.select(".x-axis").call(
-      //   d3
-      //     .axisBottom(xScale)
-      //     .ticks(10)
-      //     .tickFormat((d, i) =>
-      //       data[i] ? d3.timeFormat("%M:%S")(data[i].time) : "",
-      //     ),
-      // );
-
       g.select(".y-axis").call(d3.axisLeft(yScale));
     }
 
@@ -89,7 +79,8 @@ async function initFirebase() {
       notificationVisible = true;
       const wrapper = document.createElement("div");
       wrapper.innerHTML = [
-        `<div class="alert alert-info alert-dismissible" role="alert">`,
+        `<div class="alert alert-danger alert-dismissible" role="alert">`,
+        `   <div> Loud Enviroment! </div>`,
         `   <div>${message}</div>`,
         '   <button type="button" class="btn-close" data-bs-dismiss="alert"></button>',
         "</div>",
@@ -112,7 +103,7 @@ async function initFirebase() {
         const averageVolume = sum / dataArray.length;
         const roundedVolume = Math.round(averageVolume);
 
-        document.getElementById("volume").innerText = `Volume: ${roundedVolume}`;
+        document.getElementById("volume").innerText = `Volume: ${roundedVolume} dB`;
         if (data.length >= maxDataPoints) data.shift();
         data.push({ time: new Date(), volume: roundedVolume });
 
@@ -171,7 +162,7 @@ async function initFirebase() {
         audioContext.close();
       }
       isMicOn = false;
-      document.getElementById("volume").innerText = "Volume: 0";
+      document.getElementById("volume").innerText = "Volume: 0 dB";
       updateChart();
     }
 
@@ -186,7 +177,7 @@ async function initFirebase() {
         startMicrophone();
         this.innerHTML =
           '<i class="bi bi-mic-mute-fill"></i> <span id="toggle-mic-text">Stop Microphone</span>';
-        this.className = "btn btn-danger mb-4";
+        this.className = "btn btn-secondary mb-4";
       }
     });
 
