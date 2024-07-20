@@ -34,14 +34,14 @@ async function initFirebase() {
       .y((d) => yScale(d.volume));
 
     const g = svg
-      .append("g")
-      .attr("transform", `translate(${margin.left},${margin.top})`);
+      .append('g')
+      .attr('transform', `translate(${margin.left},${margin.top})`);
 
-    g.append("g")
-      .attr("class", "x-axis")
-      .attr("transform", `translate(0,${innerHeight})`);
+    g.append('g')
+      .attr('class', 'x-axis')
+      .attr('transform', `translate(0,${innerHeight})`);
 
-    g.append("g").attr("class", "y-axis");
+    g.append('g').attr('class', 'y-axis');
 
     function updateChart(treshold) {
       xScale.domain([0, maxDataPoints - 1]);
@@ -140,7 +140,7 @@ async function initFirebase() {
         analyser.fftSize = 256;
         source.connect(analyser);
         dataArray = new Uint8Array(analyser.frequencyBinCount);
-        let threshold = document.getElementById("current-threshold").value;
+        const threshold = document.getElementById("current-threshold").value;
 
         const volumeGenerator = updateVolumeGenerator(threshold);
         async function runGenerator() {

@@ -1,6 +1,6 @@
 import { Auth0Client } from 'https://cdn.jsdelivr.net/npm/@auth0/auth0-spa-js@1.20.0/dist/auth0-spa-js.production.esm.js';
 
-let auth0Client = null;
+let auth0Client = null
 
 async function createClient() {
   const response = await fetch('/config');
@@ -10,7 +10,7 @@ async function createClient() {
     domain: auth0Config.domain,
     client_id: auth0Config.clientId,
     redirect_uri: auth0Config.redirectUri
-  });
+  })
 }
 
 async function login() {
@@ -23,8 +23,8 @@ async function logout() {
   await auth0Client.logout();
 }
 
-async function getUser() {
-  return await auth0Client.getUser();
+async function getUser () {
+  return await auth0Client.getUser()
 }
 
-export { createClient, login, logout, getUser };
+export { createClient, login, logout, getUser }
