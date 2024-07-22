@@ -1,7 +1,7 @@
 import { initializeApp } from "https://www.gstatic.com/firebasejs/9.9.3/firebase-app.js";
 import { getFirestore } from "https://www.gstatic.com/firebasejs/9.9.3/firebase-firestore.js";
 import { collection, addDoc } from "https://www.gstatic.com/firebasejs/9.9.3/firebase-firestore.js";
-import getFirebaseConfig from "./firebaseConfig.js";
+import getFirebaseConfig from "../public/firebaseConfig.js";
 
 async function initFirebase() {
     const firebaseConfig = await getFirebaseConfig();
